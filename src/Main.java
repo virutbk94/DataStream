@@ -14,6 +14,7 @@ public class Main {
 	public static final String HASH_PARAM_FILE_NAME = "/home/virutbk/HW4-q4/hash_params.txt";
 	public static final String COUNT_FILE_NAME = "/home/virutbk/HW4-q4/counts.txt";
 	public static int n_buckets, p, n_hashs;
+	public static int t = 196432300;
 	public static int[] a, b;
 	public static long x;
 	public static int[][] c;
@@ -41,7 +42,7 @@ public class Main {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(OUT_FILE_NAME));
 
 		BufferedReader br1 = new BufferedReader(new FileReader(COUNT_FILE_NAME));
-		int n, exactly_count, predict_count;
+		int n,exactly_count,predict_count;
 		List<Integer> list = new ArrayList<Integer>();
 		
 		while ((line = br1.readLine()) != null) {
@@ -53,12 +54,19 @@ public class Main {
 				list.add(c[i][j]);
 			}
 			predict_count = Collections.min(list);
-			bw.write(n + "\t" + predict_count + "\t" + log_log_eror(exactly_count, predict_count));
+			
+			bw.write(n + "\t" + predict_count +
+					"\tError=" + error(exactly_count,predict_count) + 
+					"\tFreequence=" + exactly_count/(double)t);
 			bw.newLine();
 			list.clear();
 		}
 		br1.close();
 		bw.close();
+	}
+
+	private static double error(int exactly_count, int predict_count) {
+		return Math.abs(exactly_count-predict_count)/(double)exactly_count;
 	}
 
 	private static void loadHashParam() {
@@ -81,10 +89,6 @@ public class Main {
 		int y = (int) (x % p);
 		int hash_value = a * y + b;
 		return hash_value % n_buckets;
-	}
-
-	public static double log_log_eror(int exactly_count,int predict_count){
-		return Math.log(Math.log(Math.abs(predict_count-exactly_count)));
 	}
 	
 }
